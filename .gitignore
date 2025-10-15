@@ -24,3 +24,6 @@ ENV/
 
 # Go workspace file
 go.work
+
+# Ignore JetBrains project files
+.idea/
