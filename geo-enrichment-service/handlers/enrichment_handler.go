@@ -1,30 +1,15 @@
 package handlers
 
 import (
+	"github.com/MahadISL/GeoSync/geo-enrichment-service/models"
+	"github.com/MahadISL/GeoSync/geo-enrichment-service/services"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-type EnrichmentRequest struct {
-	Latitude  float64 `json:"latitude" binding:"required"`
-	Longitude float64 `json:"longitude" binding:"required"`
-}
-type EnrichmentResponse struct {
-	Weather WeatherData `json:"weather"`
-	Places  []PlaceData `json:"places"`
-}
-type WeatherData struct {
-	Temperature float64 `json:"temperature"`
-	Condition   string  `json:"condition"`
-}
-type PlaceData struct {
-	Name     string `json:"name"`
-	Category string `json:"category"`
-}
-
 func EnrichHandler(c *gin.Context) {
 
-	var request EnrichmentRequest
+	var request models.EnrichmentRequest
 
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
@@ -32,19 +17,9 @@ func EnrichHandler(c *gin.Context) {
 		return
 	}
 
-	//Mocked response data.
-	mockedResponse := EnrichmentResponse{
-		Weather: WeatherData{
-			Temperature: 15.5,
-			Condition:   "Sunny",
-		},
-		Places: []PlaceData{
-			{Name: "Eiffel Tower", Category: "Tourist Attraction"},
-			{Name: "Louvre Museum", Category: "Museum"},
-		},
-	}
+	finalResponse := services.EnrichLocation(request.Latitude, request.Longitude)
 
-	c.JSON(http.StatusOK, mockedResponse)
+	c.JSON(http.StatusOK, finalResponse)
 }
 
 func HealthCheckHandler(c *gin.Context) {
