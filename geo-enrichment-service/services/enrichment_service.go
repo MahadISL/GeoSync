@@ -13,14 +13,16 @@ func EnrichLocation(lat, lon float64) models.EnrichmentResponse {
 
 	var wg sync.WaitGroup
 
-	// Using channels to receive the results from our concurrent API calls.
+	// Create a channel for each concurrent API call.
 	weatherChan := make(chan *clients.OWMResponse, 1)
+	geoChan := make(chan *clients.NominatimResponse, 1)
 
-	// We have one concurrent operation to wait for.
-	wg.Add(1)
+	// Two concurrent operation to wait for.
+	wg.Add(2)
 
-	// Launching a goroutine to fetch weather data.
+	// --- Goroutine 1: Fetch Weather Data ---
 	go func() {
+		log.Println("Fetching weather data...")
 		defer wg.Done()
 		weatherData, err := clients.GetWeatherData(lat, lon)
 		if err != nil {
@@ -31,21 +33,46 @@ func EnrichLocation(lat, lon float64) models.EnrichmentResponse {
 		weatherChan <- weatherData // Send the result to the channel.
 	}()
 
+	// --- Goroutine 2: Fetch Location Name ---
+	go func() {
+		log.Println("Fetching location name...")
+		defer wg.Done() // Decrement the WaitGroup counter when this goroutine finishes.
+		geoData, err := clients.GetLocationName(lat, lon)
+		if err != nil {
+			log.Printf("Error getting location name: %v", err)
+			geoChan <- nil
+			return
+		}
+		geoChan <- geoData
+	}()
+
 	// Wait for all the goroutines we launched to finish.
 	wg.Wait()
 
-	// Close the channels
+	// Close the channels.
 	close(weatherChan)
+	close(geoChan)
 
+	// Read the results from the channels.
 	weatherResult := <-weatherChan
+	geoResult := <-geoChan
 
 	// Build the final response.
-	response := models.EnrichmentResponse{}
+	response := models.EnrichmentResponse{
+		Places: []models.PlaceData{}, // Initialize as an empty slice to avoid 'null' in JSON.
+	}
 
 	// Safely check if the weather result is not nil before accessing it.
 	if weatherResult != nil && len(weatherResult.Weather) > 0 {
 		response.Weather.Temperature = weatherResult.Main.Temp
 		response.Weather.Condition = weatherResult.Weather[0].Main
+	}
+
+	if geoResult != nil {
+		response.Places = append(response.Places, models.PlaceData{
+			Name:     geoResult.DisplayName,
+			Category: "Location Address",
+		})
 	}
 
 	return response
