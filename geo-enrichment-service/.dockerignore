@@ -7,3 +7,5 @@
 
 # Ignore local build artifacts
 *.exe
+
+.env

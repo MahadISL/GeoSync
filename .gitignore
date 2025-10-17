@@ -27,5 +27,3 @@ go.work
 
 # Ignore JetBrains project files
 .idea/
-
-curlcd 

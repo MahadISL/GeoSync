@@ -2,7 +2,7 @@ import httpx
 
 
 NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search"
-ENRICHMENT_SERVICE_URL = "http://localhost:8081/enrich"
+ENRICHMENT_SERVICE_URL = "http://geo-enrichment-service:8081/enrich"
 USER_AGENT = "GeoSync-API-App"
 
 async def geocode_location(query: str) -> tuple[float, float] | None:
