@@ -5,18 +5,20 @@ services:
 
   user-facing-real-time-service:
     build: ./user-facing-real-time-service
-    image: geosync/user-facing-real-time-service:0.1.1
+    image: geosync/user-facing-real-time-service:0.1.2
     container_name: fastapi_service
     ports:
       - "8000:8000"
     # Start go-service before starting this one.
     depends_on:
       - geo-enrichment-service
+    environment:
+      - ENRICHMENT_SERVICE_URL=http://go-service:8081/enrich
 
   # Define our Go service.
   geo-enrichment-service:
     build: ./geo-enrichment-service
-    image: geosync/geo-enrichment-service:0.1.1
+    image: geosync/geo-enrichment-service:0.1.2
     container_name: go_service
     expose:
       - "8081"

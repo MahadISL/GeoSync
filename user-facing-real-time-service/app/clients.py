@@ -1,8 +1,8 @@
 import httpx
-
+from app import config import settings
 
 NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search"
-ENRICHMENT_SERVICE_URL = "http://geo-enrichment-service:8081/enrich"
+# ENRICHMENT_SERVICE_URL = "http://geo-enrichment-service:8081/enrich"
 USER_AGENT = "GeoSync-API-App"
 
 async def geocode_location(query: str) -> tuple[float, float] | None:
@@ -36,7 +36,7 @@ async def get_enriched_data(lat: float, lon: float) -> dict | None:
     async with httpx.AsyncClient() as client:
         try:
             # The Go service expects a POST request with a JSON body
-            response = await client.post(ENRICHMENT_SERVICE_URL, json={"latitude": lat, "longitude": lon})
+            response = await client.post(settings.enrichment_service_url, json={"latitude": lat, "longitude": lon})
             response.raise_for_status()
             return response.json()
         except httpx.RequestError as e:
