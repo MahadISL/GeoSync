@@ -1,5 +1,5 @@
 import httpx
-from app import config import settings
+from app.config import settings
 
 NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search"
 # ENRICHMENT_SERVICE_URL = "http://geo-enrichment-service:8081/enrich"

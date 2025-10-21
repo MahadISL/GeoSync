@@ -13,7 +13,7 @@ services:
     depends_on:
       - geo-enrichment-service
     environment:
-      - ENRICHMENT_SERVICE_URL=http://go-service:8081/enrich
+      - ENRICHMENT_SERVICE_URL=http://geo-enrichment-service:8081/enrich
 
   # Define our Go service.
   geo-enrichment-service:
