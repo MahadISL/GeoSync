@@ -26,18 +26,18 @@ The system is composed of two distinct microservices that run in separate Docker
 ```mermaid
 graph TD
     subgraph "User's Machine"
-        User(["👨‍💻 User / Client"])
+        User("User / Client")
     end
 
     subgraph "Docker Environment (Managed by Docker Compose)"
-        F[🐍 FastAPI Service <br>(Port 8000)]
-        G[🐹 Go Enrichment Service <br>(Port 8081)]
+        F["FastAPI Service <br>(Port 8000)"]
+        G["Go Enrichment Service <br>(Port 8081)"]
     end
 
     subgraph "External APIs"
-        Geo[🗺️ Nominatim Geocoding API]
-        Weather[☀️ OpenWeatherMap API]
-        ReverseGeo[📍 Nominatim Reverse Geocoding]
+        Geo["Nominatim Geocoding API"]
+        Weather["OpenWeatherMap API"]
+        ReverseGeo["Nominatim Reverse Geocoding"]
     end
 
     User -- "HTTP POST /api/location" --> F
