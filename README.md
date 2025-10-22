@@ -23,7 +23,31 @@ This project serves as a practical demonstration of modern backend development p
 
 The system is composed of two distinct microservices that run in separate Docker containers and communicate over a private network managed by Docker Compose.
 
-![Architecture Diagram](https://placehold.co/800x400/FFF/333?text=Architecture%20Diagram%20Here)
+```mermaid
+graph TD
+    subgraph "User's Machine"
+        User(["👨‍💻 User / Client"])
+    end
+
+    subgraph "Docker Environment (Managed by Docker Compose)"
+        F[🐍 FastAPI Service <br>(Port 8000)]
+        G[🐹 Go Enrichment Service <br>(Port 8081)]
+    end
+
+    subgraph "External APIs"
+        Geo[🗺️ Nominatim Geocoding API]
+        Weather[☀️ OpenWeatherMap API]
+        ReverseGeo[📍 Nominatim Reverse Geocoding]
+    end
+
+    User -- "HTTP POST /api/location" --> F
+    F -- "Internal HTTP Call" --> G
+    F -- "API Call" --> Geo
+    G -- "Concurrent API Calls" --> Weather
+    G -- "Concurrent API Calls" --> ReverseGeo
+
+    style F fill:#009688,stroke:#333,stroke-width:2px,color:#fff
+    style G fill:#007D9C,stroke:#333,stroke-width:2px,color:#fff
 
 ### 1. FastAPI Service (`fastapi-service`)
 *   **Language:** Python (with FastAPI)
