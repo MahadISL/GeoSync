@@ -48,6 +48,7 @@ graph TD
 
     style F fill:#009688,stroke:#333,stroke-width:2px,color:#fff
     style G fill:#007D9C,stroke:#333,stroke-width:2px,color:#fff
+```
 
 ### 1. FastAPI Service (`fastapi-service`)
 *   **Language:** Python (with FastAPI)
